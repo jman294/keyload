@@ -1,0 +1,25 @@
+{
+  "name": "keyload",
+  "version": "1.0.0",
+  "description": "A game for loading bars",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "keywords": [
+    "loader",
+    "game",
+    "progress",
+    "bar"
+  ],
+  "author": "Jack DuPlessis",
+  "license": "ISC",
+  "devDependencies": {
+    "mocha": "^3.2.0",
+    "test-console": "^1.0.0"
+  },
+  "dependencies": {
+    "keypress": "^0.2.1",
+    "node-tput": "0.0.5"
+  }
+}
