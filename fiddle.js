@@ -1,7 +1,7 @@
 var ProgressBar = require('progress');
 
 var bar = new ProgressBar(':bar', {
-  total: 10
+  total: process.stdout.columns
 });
 var timer = setInterval(function() {
   bar.tick();
