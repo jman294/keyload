@@ -41,6 +41,10 @@ function ProgressBar(settings) {
 
     var max = process.stdout.columns-2
 
+    if (max <= LOAD_ENDS) {
+      LOAD_ENDS = 0
+    }
+
     var loadBarLen = Math.round(2 / 3 * max)
     var loadBar = bar(loadBarLen - LOAD_ENDS, done, undone)
     var loadBarStr = `[${loadBar}]`
@@ -69,7 +73,7 @@ function ProgressBar(settings) {
 
     var result = `[${loadBar}]${status}`
 
-    stream.cursorTo(0)
+    stream.write('\r')
     stream.write(result)
     stream.clearLine(1)
   }
@@ -77,6 +81,12 @@ function ProgressBar(settings) {
   function bar(length, token, filler) {
     var loadLen = Math.min(Math.floor((part * length) / whole), length)
     var rest = length - loadLen
+    if (rest < 0) {
+      rest = 0
+    }
+    if (loadLen < 0) {
+      loadLen = 0
+    }
 
     return token.repeat(loadLen) + filler.repeat(rest)
   }
@@ -113,7 +123,7 @@ function ProgressBar(settings) {
   var interval = setInterval(render, 10)
   process.on('SIGINT', function() {
     end()
-  });
+  })
 }
 
 var bar = new ProgressBar({
