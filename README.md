@@ -1,7 +1,7 @@
 # keyload
 A progress bar NodeJS
 <br/>
-![keyload demo](./imgs/loading_bar.gif "GIF of the loading bar")
+![keyload demo](https://github.com/jman294/keyload/blob/master/imgs/loading_bar.gif "GIF of the loading bar")
 
 ## Example
 `npm install keyload --save`
