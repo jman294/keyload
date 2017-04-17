@@ -1,6 +1,6 @@
 {
   "name": "keyload",
-  "version": "2.2.1",
+  "version": "2.2.2",
   "description": "A loading bar",
   "main": "index.js",
   "scripts": {
