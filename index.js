@@ -10,13 +10,14 @@ Number.isInteger = Number.isInteger || function(value) {
 // whole: defaults to ten
 // done: done token
 // undone: undone token
-function ProgressBar(settings) {
+function KeyLoad(settings) {
+  var time = 0
   var part = 0
   var whole = 10
   var stream = process.stdout
   var message = ''
   if (settings.stream) {
-    stream = settings.sttream
+    stream = settings.stream
   }
   if (settings.whole && Number.isInteger(settings.whole)) {
     whole = settings.whole
@@ -31,43 +32,45 @@ function ProgressBar(settings) {
   function render() {
     var done = '#'
     var undone = ' '
+    var middle = ''
     if (settings.done) done = settings.done
     if (settings.undone) undone = settings.undone
+    if (settings.middle) middle = settings.middle
 
     var LOAD_ENDS = 2
     var MESSAGE_PADS = 2
     var PAD1 = ' '
     var PAD2 = PAD1
 
-    var max = process.stdout.columns-2
+    var max = process.stdout.columns
 
     if (max <= LOAD_ENDS) {
       LOAD_ENDS = 0
     }
 
     var loadBarLen = Math.round(2 / 3 * max)
-    var loadBar = bar(loadBarLen - LOAD_ENDS, done, undone)
+    var loadBar = bar(loadBarLen - LOAD_ENDS, done, undone, middle)
     var loadBarStr = `[${loadBar}]`
 
     var percent = Math.round(part / whole * 100)
     var fraction = part + '\\' + whole
-    var percFrac = `${percent}% - ${fraction}`
+    var stats = `${round(time/1000, 2)}s ${percent}% - ${fraction}`
 
     var statusLen = max - loadBarLen
     var status
-    if (statusLen > percFrac.length + 2) {
+    if (statusLen > stats.length + 2) {
       var newMessage = message
-      var msgSpace = statusLen - percFrac.length
+      var msgSpace = statusLen - stats.length
       if (msgSpace < 0) msgSpace = 0
 
       newMessage += ' '.repeat(msgSpace)
       newMessage = newMessage.slice(0, msgSpace <= 2 ? 0 : msgSpace - 2)
       newMessage = PAD1.concat(newMessage).concat(PAD2)
-      status = `${newMessage}${percFrac}`
+      status = `${newMessage}${stats}`
     } else {
       status = ''
       loadBarLen = max
-      loadBar = bar(loadBarLen - LOAD_ENDS, done, undone)
+      loadBar = bar(loadBarLen - LOAD_ENDS, done, undone, middle)
       loadBarStr = `[${loadBar}]`
     }
 
@@ -78,17 +81,22 @@ function ProgressBar(settings) {
     stream.clearLine(1)
   }
 
-  function bar(length, token, filler) {
+  function round(value, decimals) {
+      return Number(Math.round(value+'e'+decimals)+'e-'+decimals);
+  }
+
+  function bar(length, token, filler, middle) {
     var loadLen = Math.min(Math.floor((part * length) / whole), length)
     var rest = length - loadLen
-    if (rest < 0) {
-      rest = 0
-    }
-    if (loadLen < 0) {
-      loadLen = 0
-    }
 
-    return token.repeat(loadLen) + filler.repeat(rest)
+    if (middle === undefined) {
+      middle = ''
+    }
+    var cut = middle.length
+
+    loadLen = loadLen-cut < 0 ? 0:loadLen-cut
+    rest = loadLen <= 0 ? rest-1:rest
+    return token.repeat(loadLen) + middle + filler.repeat(rest)
   }
 
   function end() {
@@ -120,26 +128,13 @@ function ProgressBar(settings) {
     message = _message
   }
 
-  var interval = setInterval(render, 10)
+  var interval = setInterval(function () {
+    time += 10
+    render()
+  }, 10)
   process.on('SIGINT', function() {
     end()
   })
 }
 
-var bar = new ProgressBar({
-  whole: 100,
-  undone: '\\',
-  done: '/'
-})
-var interval = setInterval(bar.tick, 500)
-var interval2 = setInterval(function() {
-  bar.message('f'.repeat(Math.round(Math.random() * 100) % 16))
-  //bar.message('#'.repeat(347))
-}, 500)
-bar.on('end', function() {
-  clearInterval(interval)
-  clearInterval(interval2)
-  console.log('complete')
-})
-
-module.exports = ProgressBar
+module.exports = KeyLoad

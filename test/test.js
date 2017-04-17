@@ -1,31 +1,19 @@
-var stdout = require("test-console").stdout;
-var assert = require('assert')
-var ProgressBar = require('../index.js')
+var KeyLoad = require('../index')
 
-describe('ProgressBar', function () {
-  describe('#print', function () {
-    it('should print no bars', function () {
-      var bar = new ProgressBar()
-      var output = stdout.inspectSync(function () {
-        bar.print()
-      })
-      assert.deepEqual(output, ['\033[1G', '', '\033[0K'])
-    })
-    it('should print one bar', function () {
-      var bar = new ProgressBar()
-      var output = stdout.inspectSync(function () {
-        bar.increase(1)
-        bar.print()
-      })
-      assert.deepEqual(output, ['\033[1G', '#', '\033[0K'])
-    })
-    it('should print correct number of bars', function () {
-      var bar = new ProgressBar()
-      var output = stdout.inspectSync(function () {
-        bar.increase(2)
-        bar.print()
-      })
-      assert.deepEqual(output, ['\033[1G', '##', '\033[0K'])
-    })
-  })
+var bar = new KeyLoad({
+  whole: 20,
+  undone: ' ',
+  done: '=',
+  middle: '>',
+  stream: process.stderr // The stream for output
+})
+var interval = setInterval(bar.tick, 500)
+var interval2 = setInterval(function() {
+  bar.message('f'.repeat(Math.round(Math.random() * 100) % 16))
+  //bar.message('#'.repeat(347))
+}, 500)
+bar.on('end', function() {
+  clearInterval(interval)
+  clearInterval(interval2)
+  console.log('complete')
 })
