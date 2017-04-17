@@ -22,9 +22,6 @@
     "test": "test"
   },
   "dependencies": {
-    "keypress": "^0.2.1",
-    "node-tput": "^0.0.5",
-    "progress": "^2.0.0",
     "test-console": "^1.0.0"
   },
   "repository": {
