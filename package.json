@@ -17,5 +17,22 @@
   "devDependencies": {
     "mocha": "^3.2.0",
     "test-console": "^1.0.0"
-  }
+  },
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "keypress": "^0.2.1",
+    "node-tput": "^0.0.5",
+    "progress": "^2.0.0",
+    "test-console": "^1.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jman294/keyload.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jman294/keyload/issues"
+  },
+  "homepage": "https://github.com/jman294/keyload#readme"
 }
