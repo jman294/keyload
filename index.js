@@ -5,25 +5,16 @@ Number.isInteger = Number.isInteger || function(value) {
     Math.floor(value) === value
 }
 
-// Options supported:
-// stream: stream for output, defaults to stdout
-// whole: defaults to ten
-// done: done token
-// undone: undone token
 function KeyLoad(settings) {
   var time = 0
   var part = 0
   var whole = 10
   var stream = process.stdout
   var message = ''
-  if (settings.stream) {
-    stream = settings.stream
-  }
-  if (settings.whole && Number.isInteger(settings.whole)) {
-    whole = settings.whole
-  }
 
-  var self = this
+  if (settings.stream) stream = settings.stream
+  if (settings.whole && Number.isInteger(settings.whole)) whole = settings.whole
+
   console.log()
 
   stream.write('\x1B[?25l')
@@ -39,6 +30,8 @@ function KeyLoad(settings) {
 
     var LOAD_ENDS = 2
     var MESSAGE_PADS = 2
+    var END1 = '['
+    var END2 = ']'
     var PAD1 = ' '
     var PAD2 = PAD1
 
@@ -49,8 +42,8 @@ function KeyLoad(settings) {
     }
 
     var loadBarLen = Math.round(2 / 3 * max)
-    var loadBar = bar(loadBarLen - LOAD_ENDS, done, undone, middle)
-    var loadBarStr = `[${loadBar}]`
+    var loadBar
+    var loadBarStr
 
     var percent = Math.round(part / whole * 100)
     var fraction = part + '\\' + whole
@@ -58,23 +51,24 @@ function KeyLoad(settings) {
 
     var statusLen = max - loadBarLen
     var status
-    if (statusLen > stats.length + 2) {
+    if (statusLen > stats.length + MESSAGE_PADS) {
       var newMessage = message
       var msgSpace = statusLen - stats.length
       if (msgSpace < 0) msgSpace = 0
 
       newMessage += ' '.repeat(msgSpace)
-      newMessage = newMessage.slice(0, msgSpace <= 2 ? 0 : msgSpace - 2)
+      newMessage = newMessage.slice(0, msgSpace <= MESSAGE_PADS ? 0 : msgSpace - MESSAGE_PADS)
       newMessage = PAD1.concat(newMessage).concat(PAD2)
       status = `${newMessage}${stats}`
     } else {
       status = ''
       loadBarLen = max
-      loadBar = bar(loadBarLen - LOAD_ENDS, done, undone, middle)
-      loadBarStr = `[${loadBar}]`
     }
 
-    var result = `[${loadBar}]${status}`
+    loadBar = bar(loadBarLen - LOAD_ENDS, done, undone, middle)
+    loadBarStr = `${END1}${loadBar}${END2}`
+
+    var result = `${loadBarStr}${status}`
 
     stream.write('\r')
     stream.write(result)
@@ -131,7 +125,7 @@ function KeyLoad(settings) {
   var interval = setInterval(function () {
     time += 10
     render()
-  }, 10)
+  }, 15)
   process.on('SIGINT', function() {
     end()
   })
