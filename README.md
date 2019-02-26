@@ -38,8 +38,8 @@ bar.tick()
 
 ## API
 
-### `tick()`
-Increases the bar by one.
+### `tick([newPart])`
+Increases the bar by one OR if [newPart] is supplied, sets the bar to a certain point.
 
 ### `on(eventStr, callback)`
 Listen for events on the bar. Currently only `end` is supported.

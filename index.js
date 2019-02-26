@@ -42,10 +42,11 @@ function KeyLoad(settings) {
     }
 
     var loadBarLen = Math.round(2 / 3 * max)
+    console.log(loadBarLen)
     var loadBar
     var loadBarStr
 
-    var percent = Math.round(part / whole * 100)
+    var percent = Math.floor(part / whole * 100)
     var fraction = part + '\\' + whole
     var stats = `${round(time/1000, 2)}s ${percent}% - ${fraction}`
 
@@ -76,7 +77,7 @@ function KeyLoad(settings) {
   }
 
   function round(value, decimals) {
-      return Number(Math.round(value+'e'+decimals)+'e-'+decimals);
+    return Number(Math.round(value+'e'+decimals)+'e-'+decimals);
   }
 
   function bar(length, token, filler, middle) {
@@ -102,11 +103,15 @@ function KeyLoad(settings) {
   function onEnd() {}
 
   // Priveleged functions
-  this.tick = function() {
+  this.tick = function(newPart) {
     if (part >= whole) {
       end()
     } else {
-      part += 1
+      if (newPart !== undefined) {
+        part = newPart
+      } else {
+        part += 1
+      }
     }
   }
 
@@ -123,7 +128,7 @@ function KeyLoad(settings) {
   }
 
   var interval = setInterval(function () {
-    time += 10
+    time += 15
     render()
   }, 15)
   process.on('SIGINT', function() {
